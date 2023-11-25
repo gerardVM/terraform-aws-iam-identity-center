@@ -1,0 +1,20 @@
+Group1:
+  Administrator:
+    duration: PT12H
+    accounts:
+      - all
+    
+Group2:
+  Developer:
+    accounts:
+      - management_account
+  ReadOnly:
+    accounts:
+      - management_account
+      - account_alias_2
+
+Group3:
+  AwsCosts:
+    accounts:
+      - management_account
+      - account_alias_3

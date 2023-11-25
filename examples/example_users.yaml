@@ -1,0 +1,40 @@
+#Finance
+name.surname1:
+  cli-config: false
+  groups:
+    - Group3
+name.surname2:
+  cli-config: false
+  groups:
+    - Group3
+
+#Admins
+name.surname3:
+  groups:
+    - Group1 
+name.surname4:
+  groups:
+    - Group1
+
+#Marketing
+name.surname5:
+  cli-config: false
+  permissions:
+    Business:
+      accounts:
+        - management_account
+  resources:
+    account_alias_2:
+      - Effect: Allow
+        Resource:
+          - "*"
+        Action:
+          - "s3:ListAllMyBuckets"
+      - Effect: Allow
+        Resource:
+          - "arn:aws:s3:::some-bucket*"
+        Action:
+          - "s3:GetObject"
+          - "s3:PutObject"
+          - "s3:DeleteObject"
+          - "s3:ListBucket"

@@ -1,0 +1,10 @@
+[profile default]
+sso_start_url = ${sso_start_url}
+sso_account_id = ${sso_account_id}
+sso_region = ${sso_region}
+sso_role_name = ${sso_role_name}
+%{ for profile in profiles }
+[profile ${profile.name}]
+role_arn = ${profile.role_arn}
+source_profile = default
+%{ endfor ~}
