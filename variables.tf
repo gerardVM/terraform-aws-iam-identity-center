@@ -18,18 +18,6 @@ variable "boundary_policies_map" {
   type = map(string)
 }
 
-variable "management_account_id" {
-  type = string
-}
-
-variable "sso_start_url" {
-  type = string
-}
-
-variable "sso_region" {
-  type = string
-}
-
 variable "administrators_group" {
   type = string
 }

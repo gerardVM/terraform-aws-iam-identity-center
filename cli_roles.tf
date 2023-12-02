@@ -77,7 +77,7 @@ resource "aws_ssoadmin_account_assignment" "role_delegation_account_assignments"
 
   instance_arn = tolist(data.aws_ssoadmin_instances.instance.arns)[0]
 
-  target_id          = var.management_account_id
+  target_id          = data.aws_caller_identity.current.account_id
   target_type        = "AWS_ACCOUNT"
   principal_id       = aws_identitystore_user.users[each.key].user_id
   principal_type     = "USER"
@@ -86,19 +86,4 @@ resource "aws_ssoadmin_account_assignment" "role_delegation_account_assignments"
   depends_on         = [
     aws_ssoadmin_permission_set_inline_policy.role_delegation_set_inline_policy,
   ]
-}
-
-# Creation of the config file
-
-resource "local_file" "config_file" {
-  for_each = try(local.cli_users, {})
-
-  filename = "${path.root}/cli_users/${each.key}/config"
-  content  = templatefile("${path.module}/templates/config.tftpl", {
-    sso_start_url  = var.sso_start_url
-    sso_account_id = var.management_account_id
-    sso_region     = var.sso_region
-    sso_role_name  = aws_ssoadmin_permission_set.role_delegation_permission_sets[each.key].name
-    profiles       = local.config_profiles[each.key]
-  })
 }
