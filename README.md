@@ -122,7 +122,7 @@ Group3:
   - **resources:** (Optional) Map of accounts and resources to which the user should have access to. The resources are defined as a list of actions and resources. The actions and resources are defined as a list of strings.
 - **For groups:**
   - **permissions:** (Required) Map of permissions and accounts to which the group should have access to. The accounts are defined as a list of account aliases.
-- **Duration (Optional):** Duration of the role session. Default is PT12H. Format is ISO 8601 duration. Applicable for permissions and resources options.
+- **Duration:** (Optional) Duration of the role session. Default is PT12H. Format is ISO 8601 duration. Applicable for permissions and resources options.
 
 
 ## Notes
@@ -130,3 +130,7 @@ Group3:
 - **AWS Service Access Principals:** Ensure to include "sso.amazonaws.com" within the aws_service_access_principals list in your Terraform configuration for the aws_organizations_organization resource.
 
 - **Email Format Requirement:** The module operates effectively when user emails follow the "name.surname" format.
+
+## License
+
+Apache 2 Licensed. See [LICENSE](LICENSE) for full details.
