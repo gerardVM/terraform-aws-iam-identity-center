@@ -1,9 +1,6 @@
 locals {
-  users_data  = yamldecode(file(var.users_data_file))
-  groups_data = yamldecode(file(var.groups_data_file))
-
   memberships = flatten ([
-    for user_key, user_value in try(local.users_data, []) : [
+    for user_key, user_value in try(var.users_data, []) : [
       for group in try(user_value.groups, []) : {
         username  = user_key
         groupname = group
@@ -13,7 +10,7 @@ locals {
 }
 
 resource "aws_identitystore_user" "users" {
-  for_each = try(local.users_data, {})
+  for_each = try(var.users_data, {})
 
   identity_store_id = tolist(data.aws_ssoadmin_instances.instance.identity_store_ids)[0]
 
@@ -33,7 +30,7 @@ resource "aws_identitystore_user" "users" {
 }
 
 resource "aws_identitystore_group" "groups" {
-  for_each = try(local.groups_data, {})
+  for_each = try(var.groups_data, {})
 
   identity_store_id = tolist(data.aws_ssoadmin_instances.instance.identity_store_ids)[0]
 

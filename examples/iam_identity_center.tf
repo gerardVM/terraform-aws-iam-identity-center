@@ -41,8 +41,8 @@ module "iam_sso" {
 
   # Config files
 
-  users_data_file  = "./example_users.yaml"
-  groups_data_file = "./example_groups.yaml"
+  users_data  = yamldecode(file("./sso.yaml")).users
+  groups_data = yamldecode(file("./sso.yaml")).groups
 }
 
 

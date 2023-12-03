@@ -1,7 +1,7 @@
 locals {
-  cli_users = { for user_name, user_value in try(local.users_data, []) : user_name => user_value if try(user_value.cli-config, var.cli_config) }
+  cli_users = { for user_name, user_value in try(var.users_data, []) : user_name => user_value if try(user_value.cli-config, var.cli_config) }
 
-  individual_assumed_roles = { for user_name, user_value in try(local.users_data, []) : user_name => flatten([
+  individual_assumed_roles = { for user_name, user_value in try(var.users_data, []) : user_name => flatten([
     for permission_key, permission_value in try(user_value.permissions,[]) : [
       for account in contains(permission_value.accounts, "all") ? keys(var.alias_to_id_map) : permission_value.accounts : [
         for role in var.cli_roles_map[permission_key] : "arn:aws:iam::${var.alias_to_id_map[account]}:role/${role}"
@@ -9,7 +9,7 @@ locals {
     ]
   ])}
 
-  group_assumed_roles = { for group_name, group_value in try(local.groups_data, []) : group_name => flatten([
+  group_assumed_roles = { for group_name, group_value in try(var.groups_data, []) : group_name => flatten([
     for permission_key, permission_value in group_value : [
       for account in contains(permission_value.accounts, "all") ? keys(var.alias_to_id_map) : permission_value.accounts : [
         for role in var.cli_roles_map[permission_key] : "arn:aws:iam::${var.alias_to_id_map[account]}:role/${role}"
@@ -17,11 +17,11 @@ locals {
     ]
   ])}
 
-  individual_resources_metaroles = { for user_name, user_value in try(local.users_data, []) : user_name => flatten([
+  individual_resources_metaroles = { for user_name, user_value in try(var.users_data, []) : user_name => flatten([
     for account_key, account_value in try(user_value.resources, []) : "arn:aws:iam::${var.alias_to_id_map[account_key]}:role/${replace(title(user_name), ".", "")}CustomResources"
   ])}
 
-  user_role_list = {for user_name, user_value in try(local.users_data, []) : user_name => concat(
+  user_role_list = {for user_name, user_value in try(var.users_data, []) : user_name => concat(
     local.individual_assumed_roles[user_name],
     flatten([ for group in try(user_value.groups, []) : local.group_assumed_roles[group] ]),
     local.individual_resources_metaroles[user_name]
@@ -29,7 +29,7 @@ locals {
 
   id_to_alias_map = { for k, v in var.alias_to_id_map : v => k if v != "" }
 
-  config_profiles = { for user_name, user_value in try(local.users_data, []) : user_name => [
+  config_profiles = { for user_name, user_value in try(var.users_data, []) : user_name => [
     for role in try(local.user_role_list[user_name], []) : {
       role_name     = split("/", role)[1]
       role_arn      = role

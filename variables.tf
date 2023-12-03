@@ -26,12 +26,12 @@ variable "cli_roles_map" {
   type = map(list(string))
 }
 
-variable "users_data_file" {
-  type = string
+variable "users_data" {
+  type = any
 }
 
-variable "groups_data_file" {
-  type = string
+variable "groups_data" {
+  type = any
 }
 
 variable "console_duration" {
