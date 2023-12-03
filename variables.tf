@@ -18,18 +18,6 @@ variable "boundary_policies_map" {
   type = map(string)
 }
 
-variable "management_account_id" {
-  type = string
-}
-
-variable "sso_start_url" {
-  type = string
-}
-
-variable "sso_region" {
-  type = string
-}
-
 variable "administrators_group" {
   type = string
 }
@@ -38,12 +26,12 @@ variable "cli_roles_map" {
   type = map(list(string))
 }
 
-variable "users_data_file" {
-  type = string
+variable "users_data" {
+  type = any
 }
 
-variable "groups_data_file" {
-  type = string
+variable "groups_data" {
+  type = any
 }
 
 variable "console_duration" {

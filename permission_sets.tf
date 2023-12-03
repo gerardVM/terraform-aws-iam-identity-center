@@ -1,6 +1,6 @@
 locals {
   groups_permission_sets = flatten([
-    for group_key, group_value in try(local.groups_data, []) : [
+    for group_key, group_value in try(var.groups_data, []) : [
       for permission_key, permission_value in try(group_value, []) : {
         groupname  = group_key
         permission = permission_key
@@ -9,7 +9,7 @@ locals {
       }]])
   
   users_permission_sets = flatten([
-    for user_key, user_value in try(local.users_data, []) : [
+    for user_key, user_value in try(var.users_data, []) : [
       for permission_key, permission_value in try(user_value.permissions, []) : {
         username   = user_key
         permission = permission_key
@@ -18,7 +18,7 @@ locals {
       }]])
   
   users_inline_permission_sets = flatten([
-    for user_key, user_value in try(local.users_data, []) : [
+    for user_key, user_value in try(var.users_data, []) : [
       for account_key, account_value in try(user_value.resources, []) : {
         username   = user_key
         principal  = aws_identitystore_user.users[user_key]

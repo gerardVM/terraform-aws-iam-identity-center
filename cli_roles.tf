@@ -1,7 +1,7 @@
 locals {
-  cli_users = { for user_name, user_value in try(local.users_data, []) : user_name => user_value if try(user_value.cli-config, var.cli_config) }
+  cli_users = { for user_name, user_value in try(var.users_data, []) : user_name => user_value if try(user_value.cli-config, var.cli_config) }
 
-  individual_assumed_roles = { for user_name, user_value in try(local.users_data, []) : user_name => flatten([
+  individual_assumed_roles = { for user_name, user_value in try(var.users_data, []) : user_name => flatten([
     for permission_key, permission_value in try(user_value.permissions,[]) : [
       for account in contains(permission_value.accounts, "all") ? keys(var.alias_to_id_map) : permission_value.accounts : [
         for role in var.cli_roles_map[permission_key] : "arn:aws:iam::${var.alias_to_id_map[account]}:role/${role}"
@@ -9,7 +9,7 @@ locals {
     ]
   ])}
 
-  group_assumed_roles = { for group_name, group_value in try(local.groups_data, []) : group_name => flatten([
+  group_assumed_roles = { for group_name, group_value in try(var.groups_data, []) : group_name => flatten([
     for permission_key, permission_value in group_value : [
       for account in contains(permission_value.accounts, "all") ? keys(var.alias_to_id_map) : permission_value.accounts : [
         for role in var.cli_roles_map[permission_key] : "arn:aws:iam::${var.alias_to_id_map[account]}:role/${role}"
@@ -17,11 +17,11 @@ locals {
     ]
   ])}
 
-  individual_resources_metaroles = { for user_name, user_value in try(local.users_data, []) : user_name => flatten([
+  individual_resources_metaroles = { for user_name, user_value in try(var.users_data, []) : user_name => flatten([
     for account_key, account_value in try(user_value.resources, []) : "arn:aws:iam::${var.alias_to_id_map[account_key]}:role/${replace(title(user_name), ".", "")}CustomResources"
   ])}
 
-  user_role_list = {for user_name, user_value in try(local.users_data, []) : user_name => concat(
+  user_role_list = {for user_name, user_value in try(var.users_data, []) : user_name => concat(
     local.individual_assumed_roles[user_name],
     flatten([ for group in try(user_value.groups, []) : local.group_assumed_roles[group] ]),
     local.individual_resources_metaroles[user_name]
@@ -29,10 +29,11 @@ locals {
 
   id_to_alias_map = { for k, v in var.alias_to_id_map : v => k if v != "" }
 
-  config_profiles = { for user_name, user_value in try(local.users_data, []) : user_name => [
+  config_profiles = { for user_name, user_value in try(var.users_data, []) : user_name => [
     for role in try(local.user_role_list[user_name], []) : {
-      name     = "${split("/", role)[1]}@${local.id_to_alias_map[split(":", role)[4]]}"
-      role_arn = role
+      role_name     = split("/", role)[1]
+      role_arn      = role
+      account_alias = local.id_to_alias_map[split(":", role)[4]]
     }
   ]}
 }
@@ -77,7 +78,7 @@ resource "aws_ssoadmin_account_assignment" "role_delegation_account_assignments"
 
   instance_arn = tolist(data.aws_ssoadmin_instances.instance.arns)[0]
 
-  target_id          = var.management_account_id
+  target_id          = data.aws_caller_identity.current.account_id
   target_type        = "AWS_ACCOUNT"
   principal_id       = aws_identitystore_user.users[each.key].user_id
   principal_type     = "USER"
@@ -86,19 +87,4 @@ resource "aws_ssoadmin_account_assignment" "role_delegation_account_assignments"
   depends_on         = [
     aws_ssoadmin_permission_set_inline_policy.role_delegation_set_inline_policy,
   ]
-}
-
-# Creation of the config file
-
-resource "local_file" "config_file" {
-  for_each = try(local.cli_users, {})
-
-  filename = "${path.root}/cli_users/${each.key}/config"
-  content  = templatefile("${path.module}/templates/config.tftpl", {
-    sso_start_url  = var.sso_start_url
-    sso_account_id = var.management_account_id
-    sso_region     = var.sso_region
-    sso_role_name  = aws_ssoadmin_permission_set.role_delegation_permission_sets[each.key].name
-    profiles       = local.config_profiles[each.key]
-  })
 }

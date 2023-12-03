@@ -4,7 +4,7 @@ sso_account_id = ${sso_account_id}
 sso_region = ${sso_region}
 sso_role_name = ${sso_role_name}
 %{ for profile in profiles }
-[profile ${profile.name}]
+[profile ${profile.role_name}@${profile.account_alias}]
 role_arn = ${profile.role_arn}
 source_profile = default
 %{ endfor ~}
