@@ -31,8 +31,9 @@ locals {
 
   config_profiles = { for user_name, user_value in try(local.users_data, []) : user_name => [
     for role in try(local.user_role_list[user_name], []) : {
-      name     = "${split("/", role)[1]}@${local.id_to_alias_map[split(":", role)[4]]}"
-      role_arn = role
+      role_name     = split("/", role)[1]
+      role_arn      = role
+      account_alias = local.id_to_alias_map[split(":", role)[4]]
     }
   ]}
 }

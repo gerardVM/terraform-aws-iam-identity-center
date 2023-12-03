@@ -54,9 +54,9 @@ resource "local_file" "config_file" {
   filename = "${path.root}/cli_users/${each.key}/config"
   content  = templatefile("./templates/config.tftpl", {
     sso_start_url  = "https://example.awsapps.com/start" # Available in the AWS IAM Identity Center console
-    sso_account_id = module.iam_sso.sso_account_id
+    sso_account_id = module.iam_sso.role_delegation_account_assignments[each.key].target_id
     sso_region     = "us-east-1"
-    sso_role_name  = module.iam_sso.sso_role_name[each.key].name
+    sso_role_name  = module.iam_sso.role_delegation_permission_sets[each.key].name
     profiles       = module.iam_sso.cli_profiles[each.key]
   })
 }
