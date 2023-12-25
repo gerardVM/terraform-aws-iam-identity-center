@@ -17,14 +17,9 @@ locals {
     ]
   ])}
 
-  individual_resources_metaroles = { for user_name, user_value in try(var.users_data, []) : user_name => flatten([
-    for account_key, account_value in try(user_value.resources, []) : "arn:aws:iam::${var.alias_to_id_map[account_key]}:role/${replace(title(user_name), ".", "")}CustomResources"
-  ])}
-
   user_role_list = {for user_name, user_value in try(var.users_data, []) : user_name => concat(
     local.individual_assumed_roles[user_name],
-    flatten([ for group in try(user_value.groups, []) : local.group_assumed_roles[group] ]),
-    local.individual_resources_metaroles[user_name]
+    flatten([ for group in try(user_value.groups, []) : local.group_assumed_roles[group] ])
   )}
 
   id_to_alias_map = { for k, v in var.alias_to_id_map : v => k if v != "" }
