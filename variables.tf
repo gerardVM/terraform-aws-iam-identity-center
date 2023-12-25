@@ -1,7 +1,3 @@
-variable "email_domain" {
-  type = string
-}
-
 variable "alias_to_id_map" {
   type = map(string)
 }

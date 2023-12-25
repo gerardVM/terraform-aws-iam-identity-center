@@ -15,17 +15,17 @@ resource "aws_identitystore_user" "users" {
   identity_store_id = tolist(data.aws_ssoadmin_instances.instance.identity_store_ids)[0]
 
   display_name = each.key
-  user_name    = "${each.key}@${var.email_domain}"
+  user_name    = each.key
 
   name {
-    given_name  = title(split(".", each.key)[0])
-    family_name = try(title(split(".", each.key)[1]), title(split(".", var.email_domain)[0]))
+    given_name  = try(each.value.name.first, title(split(".", each.key)[0]))
+    family_name = try(each.value.name.last, title(split(".", each.key)[1]))
   }
 
   emails {
     primary = true
     type    = "work"
-    value   = "${each.key}@${var.email_domain}"
+    value   = each.value.email
   }
 }
 
