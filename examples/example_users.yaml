@@ -1,23 +1,31 @@
 #Finance
 name.surname1:
+  name:
+    first: Name
+    last: Surname1
+  email: name.surname1@example.com
   cli-config: false
   groups:
     - Group3
 name.surname2:
+  email: name.surname2@example.com
   cli-config: false
   groups:
     - Group3
 
 #Admins
 name.surname3:
+  email: name.surname3@example.com
   groups:
     - Group1 
 name.surname4:
+  email: name.surname4@example.com
   groups:
     - Group1
 
 #Marketing
 name.surname5:
+  email: name.surname5@example.com
   cli-config: false
   permissions:
     Business:

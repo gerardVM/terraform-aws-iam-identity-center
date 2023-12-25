@@ -1,8 +1,6 @@
 module "iam_sso" {
   source = "github.com/gerardvm/terraform-aws-iam-identity-center?ref=1.0.0"
 
-  email_domain = "example.com"
-
   alias_to_id_map = {
     "management_account" = "123456789012"
     "account_alias_2"    = "account_id_2"
@@ -41,8 +39,8 @@ module "iam_sso" {
 
   # Config files
 
-  users_data  = yamldecode(file("./sso.yaml")).users
-  groups_data = yamldecode(file("./sso.yaml")).groups
+  users_data  = yamldecode(file("./example_users.yaml"))
+  groups_data = yamldecode(file("./example_groups.yaml"))
 }
 
 
