@@ -8,7 +8,7 @@ Terraform module which creates AWS IAM Identity Center resources on AWS using ya
 
 ```hcl
 module "iam_sso" {
-  source = "github.com/gerardvm/terraform-aws-iam-identity-center?ref=1.1.0"
+  source = "github.com/gerardvm/terraform-aws-iam-identity-center?ref=2.0.0"
 
   alias_to_id_map = {
     "management_account" = "123456789012"
