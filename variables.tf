@@ -4,22 +4,27 @@ variable "alias_to_id_map" {
 
 variable "managed_policies_map" {
   type = map(list(string))
+  default = {}
 }
 
 variable "custom_policies_map" {
   type = map(string)
+  default = {}
 }
 
 variable "boundary_policies_map" {
   type = map(string)
+  default = {}
 }
 
 variable "administrators_group" {
   type = string
+  default = ""
 }
 
 variable "cli_roles_map" {
   type = map(list(string))
+  default = {}
 }
 
 variable "users_data" {

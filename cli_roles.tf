@@ -4,7 +4,7 @@ locals {
   individual_assumed_roles = { for user_name, user_value in try(var.users_data, []) : user_name => flatten([
     for permission_key, permission_value in try(user_value.permissions,[]) : [
       for account in contains(permission_value.accounts, "all") ? keys(var.alias_to_id_map) : permission_value.accounts : [
-        for role in var.cli_roles_map[permission_key] : "arn:aws:iam::${var.alias_to_id_map[account]}:role/${role}"
+        for role in try(var.cli_roles_map[permission_key], []) : "arn:aws:iam::${var.alias_to_id_map[account]}:role/${role}"
       ]
     ]
   ])}
@@ -12,7 +12,7 @@ locals {
   group_assumed_roles = { for group_name, group_value in try(var.groups_data, []) : group_name => flatten([
     for permission_key, permission_value in group_value : [
       for account in contains(permission_value.accounts, "all") ? keys(var.alias_to_id_map) : permission_value.accounts : [
-        for role in var.cli_roles_map[permission_key] : "arn:aws:iam::${var.alias_to_id_map[account]}:role/${role}"
+        for role in try(var.cli_roles_map[permission_key], []) : "arn:aws:iam::${var.alias_to_id_map[account]}:role/${role}"
       ]
     ]
   ])}

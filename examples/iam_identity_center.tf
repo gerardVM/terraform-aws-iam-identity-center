@@ -1,5 +1,5 @@
 module "iam_sso" {
-  source = "github.com/gerardvm/terraform-aws-iam-identity-center?ref=1.0.0"
+  source = "github.com/gerardvm/terraform-aws-iam-identity-center?ref=2.1.0"
 
   alias_to_id_map = {
     "management_account" = "123456789012"
@@ -8,8 +8,7 @@ module "iam_sso" {
   }
 
   managed_policies_map = {
-    "Administrator" = ["AdministratorAccess"] 
-    "AwsCosts"      = []
+    "Administrator" = ["AdministratorAccess"]
     "Business"      = ["ReadOnlyAccess","AmazonRoute53DomainsFullAccess"]
     "Developer"     = ["IAMReadOnlyAccess","PowerUserAccess"]
     "Billing"       = ["AWSBillingReadOnlyAccess"]
